@@ -1,7 +1,6 @@
-# Maintainer: Jesus Alvarez <jeezusjr at gmail dot com>
-# Contributor: Kyle Fuller <inbox at kylefuller dot co dot uk>
+# Maintainer: Gabe Conradi <gummybearx at gmail dot com>
 
-pkgname="zfs"
+pkgname="zfs-lts"
 #
 # This script doesn't use bash variables for the version number because AUR
 # doesn't properly parse bash variables. We use a custom build script to
