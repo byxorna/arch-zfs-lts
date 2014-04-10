@@ -1,0 +1,73 @@
+# Maintainer: Jesus Alvarez <jeezusjr at gmail dot com>
+# Contributor: Kyle Fuller <inbox at kylefuller dot co dot uk>
+
+pkgname="zfs"
+#
+# This script doesn't use bash variables for the version number because AUR
+# doesn't properly parse bash variables. We use a custom build script to
+# automatically change the appropriate variables before building in a clean
+# chroot environment (using systemd-ndspawn).
+#
+# The build script can be found at
+# https://github.com/demizer/archzfs/blob/master/build.sh
+#
+
+# Used incase the i686 and x86_64 linux packages get out of sync with the
+# PKGREL. This occurred on January 31, 2014 where i686 was versioned at
+# 3.12.9-1 and x86_64 was versioned at 3.12.9-2.
+LINUX_VERSION_X32="3.10.36-1"
+LINUX_VERSION_X64="3.10.36-1"
+[[ $CARCH == "i686" ]] && LINUX_VERSION=$LINUX_VERSION_X32 || LINUX_VERSION=$LINUX_VERSION_X64
+
+zfsver=0.6.2
+pkgver="${zfsver}_${LINUX_VERSION%%-*}"
+pkgrel=1
+
+pkgdesc="Kernel modules for the Zettabyte File System."
+depends=("spl=$pkgver-$pkgrel" "zfs-utils-lts" "linux-lts=$LINUX_VERSION")
+makedepends=("linux-headers=$LINUX_VERSION")
+arch=("i686" "x86_64")
+url="http://zfsonlinux.org/"
+source=("http://archive.zfsonlinux.org/downloads/zfsonlinux/zfs/zfs-${zfsver}.tar.gz")
+groups=("archzfs")
+md5sums=('0b183b0abdd5be287046ad9ce4f899fd')
+license=("CDDL")
+install=zfs-lts.install
+
+build() {
+  cd "$srcdir/zfs-${zfsver}"
+  ./autogen.sh
+  if [[ $CARCH == "i686" ]]; then
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --sbindir=/usr/bin \
+                --libdir=/usr/lib \
+                --datadir=/usr/share \
+                --includedir=/usr/include \
+                --with-udevdir=/lib/udev \
+                --libexecdir=/usr/lib/zfs-${zfsver} \
+                --with-config=kernel \
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-ARCH/build
+  else
+    ./configure --prefix=/usr \
+                --sysconfdir=/etc \
+                --sbindir=/usr/bin \
+                --libdir=/usr/lib \
+                --datadir=/usr/share \
+                --includedir=/usr/include \
+                --with-udevdir=/lib/udev \
+                --libexecdir=/usr/lib/zfs-${zfsver} \
+                --with-config=kernel \
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-ARCH/build
+  fi
+  make
+}
+
+package() {
+  cd "$srcdir/zfs-${zfsver}"
+  make DESTDIR="$pkgdir" install
+
+  # move module tree /lib -> /usr/lib
+  cp -r "$pkgdir"/{lib,usr}
+  rm -r "$pkgdir"/lib
+}
