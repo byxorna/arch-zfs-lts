@@ -10,12 +10,13 @@ pkgname="spl-utils-lts"
 # The build script can be found at
 # https://github.com/demizer/archzfs/blob/master/build.sh
 #
-pkgver=0.6.2_3.10.36
+zfsver=0.6.2
+pkgver="${zfsver}_3.10.36"
 pkgrel=1
 pkgdesc="Solaris Porting Layer kernel module support files."
 arch=("i686" "x86_64")
 url="http://zfsonlinux.org/"
-source=(http://archive.zfsonlinux.org/downloads/zfsonlinux/spl/spl-0.6.2.tar.gz
+source=("http://archive.zfsonlinux.org/downloads/zfsonlinux/spl/spl-${zfsver}.tar.gz"
         spl-utils.hostid)
 groups=("archzfs")
 md5sums=('f00535bf89a7fde0e08f44a14a1f1e03'
@@ -23,7 +24,7 @@ md5sums=('f00535bf89a7fde0e08f44a14a1f1e03'
 license=("GPL")
 
 build() {
-  cd "$srcdir/spl-0.6.2"
+  cd "$srcdir/spl-${zfsver}"
   ./autogen.sh
   if [[ $CARCH == "i686" ]]; then
     ./configure --prefix=/usr --libdir=/usr/lib --sbindir=/usr/bin \
@@ -38,7 +39,7 @@ build() {
 }
 
 package() {
-  cd "$srcdir/spl-0.6.2"
+  cd "$srcdir/spl-${zfsver}"
   make DESTDIR="$pkgdir" install
 
   install -D -m644 "$srcdir"/spl-utils.hostid "$pkgdir"/etc/hostid
