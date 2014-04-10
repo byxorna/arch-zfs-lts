@@ -19,7 +19,8 @@ LINUX_VERSION_X64="3.10.36-1"
 [[ $CARCH == "i686" ]] && LINUX_VERSION=$LINUX_VERSION_X32 || LINUX_VERSION=$LINUX_VERSION_X64
 
 # pkgver should be tagged with kernel version, without kernel release
-pkgver="0.6.2_${LINUX_VERSION%%-*}"
+zfsver=0.6.2
+pkgver="${zfsver}_${LINUX_VERSION%%-*}"
 pkgrel=1
 
 pkgdesc="Solaris Porting Layer kernel modules."
@@ -27,21 +28,21 @@ depends=("spl-utils-lts" "linux-lts=$LINUX_VERSION")
 makedepends=("linux-lts-headers=$LINUX_VERSION")
 arch=("i686" "x86_64")
 url="http://zfsonlinux.org/"
-source=(http://archive.zfsonlinux.org/downloads/zfsonlinux/spl/spl-0.6.2.tar.gz)
+source=("http://archive.zfsonlinux.org/downloads/zfsonlinux/spl/spl-${zfsver}.tar.gz")
 groups=("archzfs")
 md5sums=('f00535bf89a7fde0e08f44a14a1f1e03')
 license=("GPL")
 install="$pkgname.install"
 
 prepare() {
-    cd "$srcdir/spl-0.6.2"
+    cd "$srcdir/spl-${zfsver}"
     #patch -Np1 < ../linux-3.12-compat-shrinker-api.patch
     #patch -Np1 < ../linux-3.13-compat-inode-argument.patch
     #patch -Np1 < ../linux-3.13-compat-remove-unused-flags.patch
 }
 
 build() {
-  cd "$srcdir/spl-0.6.2"
+  cd "$srcdir/spl-${zfsver}"
   ./autogen.sh
   if [[ $CARCH == "i686" ]]; then
     ./configure --prefix=/usr --libdir=/usr/lib --sbindir=/usr/bin \
@@ -56,7 +57,7 @@ build() {
 }
 
 package() {
-  cd "$srcdir/spl-0.6.2"
+  cd "$srcdir/spl-${zfsver}"
   make DESTDIR="$pkgdir" install
 
   # move module tree /lib -> /usr/lib
