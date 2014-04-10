@@ -3,6 +3,8 @@ arch-zfs-lts
 
 ZFS modules for ArchLinux on linux-lts kernel
 
+This is based on https://github.com/demizer/archzfs
+
 
 ## Build
 
