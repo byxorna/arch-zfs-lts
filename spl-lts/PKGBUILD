@@ -1,0 +1,65 @@
+# Maintainer: Gabe Conradi <gummybearx at gmail dot com>
+
+pkgname="spl-lts"
+#
+# This script doesn't use bash variables for the version number because AUR
+# doesn't properly parse bash variables. We use a custom build script to
+# automatically change the appropriate variables before building in a clean
+# chroot environment (using systemd-ndspawn).
+#
+# The build script can be found at
+# https://github.com/demizer/archzfs/blob/master/build.sh
+#
+
+# Used incase the i686 and x86_64 linux packages get out of sync with the
+# PKGREL. This occurred on January 31, 2014 where i686 was versioned at
+# 3.12.9-1 and x86_64 was versioned at 3.12.9-2.
+LINUX_VERSION_X32="3.10.36-1"
+LINUX_VERSION_X64="3.10.36-1"
+[[ $CARCH == "i686" ]] && LINUX_VERSION=$LINUX_VERSION_X32 || LINUX_VERSION=$LINUX_VERSION_X64
+
+# pkgver should be tagged with kernel version, without kernel release
+pkgver="0.6.2_${LINUX_VERSION%%-*}"
+pkgrel=1
+
+pkgdesc="Solaris Porting Layer kernel modules."
+depends=("spl-utils-lts" "linux-lts=$LINUX_VERSION")
+makedepends=("linux-lts-headers=$LINUX_VERSION")
+arch=("i686" "x86_64")
+url="http://zfsonlinux.org/"
+source=(http://archive.zfsonlinux.org/downloads/zfsonlinux/spl/spl-0.6.2.tar.gz)
+groups=("archzfs")
+md5sums=('f00535bf89a7fde0e08f44a14a1f1e03')
+license=("GPL")
+install="$pkgname.install"
+
+prepare() {
+    cd "$srcdir/spl-0.6.2"
+    #patch -Np1 < ../linux-3.12-compat-shrinker-api.patch
+    #patch -Np1 < ../linux-3.13-compat-inode-argument.patch
+    #patch -Np1 < ../linux-3.13-compat-remove-unused-flags.patch
+}
+
+build() {
+  cd "$srcdir/spl-0.6.2"
+  ./autogen.sh
+  if [[ $CARCH == "i686" ]]; then
+    ./configure --prefix=/usr --libdir=/usr/lib --sbindir=/usr/bin \
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-ARCH-lts/build \
+                --with-config=kernel --enable-atomic-spinlocks
+  else
+    ./configure --prefix=/usr --libdir=/usr/lib --sbindir=/usr/bin \
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-ARCH-lts/build \
+                --with-config=kernel
+  fi
+  make
+}
+
+package() {
+  cd "$srcdir/spl-0.6.2"
+  make DESTDIR="$pkgdir" install
+
+  # move module tree /lib -> /usr/lib
+  cp -r "$pkgdir"/{lib,usr}
+  rm -r "$pkgdir"/lib
+}
