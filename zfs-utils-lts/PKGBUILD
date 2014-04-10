@@ -43,7 +43,7 @@ build() {
                 --with-udevdir=/lib/udev \
                 --libexecdir=/usr/lib/zfs-$zfsver \
                 --with-config=user \
-                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-ARCH-lts/build
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-lts/build
   else
     ./configure --prefix=/usr \
                 --sysconfdir=/etc \
@@ -54,7 +54,7 @@ build() {
                 --with-udevdir=/lib/udev \
                 --libexecdir=/usr/lib/zfs-$zfsver \
                 --with-config=user \
-                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-ARCH-lts/build
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-lts/build
   fi
   make
 }

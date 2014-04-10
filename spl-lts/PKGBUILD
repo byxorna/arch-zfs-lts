@@ -46,11 +46,11 @@ build() {
   ./autogen.sh
   if [[ $CARCH == "i686" ]]; then
     ./configure --prefix=/usr --libdir=/usr/lib --sbindir=/usr/bin \
-                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-ARCH-lts/build \
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-lts/build \
                 --with-config=kernel --enable-atomic-spinlocks
   else
     ./configure --prefix=/usr --libdir=/usr/lib --sbindir=/usr/bin \
-                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-ARCH-lts/build \
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-lts/build \
                 --with-config=kernel
   fi
   make
