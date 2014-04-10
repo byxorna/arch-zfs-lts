@@ -13,3 +13,6 @@ Build in the following order:
 * zfs-utils-lts
 * zfs-lts
 
+## Upload
+
+makepkg --source

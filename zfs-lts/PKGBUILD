@@ -24,8 +24,8 @@ pkgver="${zfsver}_${LINUX_VERSION%%-*}"
 pkgrel=1
 
 pkgdesc="Kernel modules for the Zettabyte File System."
-depends=("spl=$pkgver-$pkgrel" "zfs-utils-lts" "linux-lts=$LINUX_VERSION")
-makedepends=("linux-headers=$LINUX_VERSION")
+depends=("spl-lts=$pkgver-$pkgrel" "zfs-utils-lts" "linux-lts=$LINUX_VERSION")
+makedepends=("linux-lts-headers=$LINUX_VERSION")
 arch=("i686" "x86_64")
 url="http://zfsonlinux.org/"
 source=("http://archive.zfsonlinux.org/downloads/zfsonlinux/zfs/zfs-${zfsver}.tar.gz")
@@ -47,7 +47,7 @@ build() {
                 --with-udevdir=/lib/udev \
                 --libexecdir=/usr/lib/zfs-${zfsver} \
                 --with-config=kernel \
-                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-ARCH/build
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X32-lts/build
   else
     ./configure --prefix=/usr \
                 --sysconfdir=/etc \
@@ -58,7 +58,7 @@ build() {
                 --with-udevdir=/lib/udev \
                 --libexecdir=/usr/lib/zfs-${zfsver} \
                 --with-config=kernel \
-                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-ARCH/build
+                --with-linux=/usr/lib/modules/$LINUX_VERSION_X64-lts/build
   fi
   make
 }
