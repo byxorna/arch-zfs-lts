@@ -11,7 +11,7 @@ pkgname="spl-utils-lts"
 # https://github.com/demizer/archzfs/blob/master/build.sh
 #
 zfsver=0.6.2
-pkgver="${zfsver}_3.10.36"
+pkgver="${zfsver}_3.10.38"
 pkgrel=1
 pkgdesc="Solaris Porting Layer kernel module support files."
 arch=("i686" "x86_64")
